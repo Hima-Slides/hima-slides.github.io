@@ -1,70 +1,150 @@
-<!doctype html>
+---
+import Layout from "../layouts/Landing.astro";
+// Define your links here
+type Link = {
+  title: string;
+  description: string;
+  url: string;
+  isExternal?: boolean;
+};
+
+const links: Link[] = Astro.props.links;
+---
+
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Links Landing Page</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Hima's Presentation Archive</title>
   </head>
   <body>
-    <main>
-      <h1>Presentation Archive</h1>
-      <a
-        href="https://github.com/Hima-Slides/presentation-template"
-        class="template-btn">Template</a
-      >
+    <main class="container">
+      <header>
+        <h1>Hima's Presentation Archive</h1>
+        <p>Collection of public presentations</p>
+      </header>
+
+      <section class="links-container">
+        {
+          links.map((link) => (
+            <a
+              href={link.url}
+              class="link-card"
+              target={link.isExternal ? "_blank" : undefined}
+              rel={link.isExternal ? "noopener noreferrer" : undefined}
+            >
+              <h2>{link.title}</h2>
+              <p>{link.description}</p>
+              {link.isExternal && <span class="external-indicator">↗</span>}
+            </a>
+          ))
+        }
+      </section>
+
+      <footer>
+        <p>
+          &copy; {new Date().getFullYear()} Himawan Winarto. All rights reserved.
+        </p>
+      </footer>
     </main>
   </body>
 </html>
 
 <style>
-  html,
-  body {
+  :root {
+    --background: #f9fafb;
+    --foreground: #111827;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --card-bg: #ffffff;
+    --card-border: #e5e7eb;
+    --card-hover: #f3f4f6;
+  }
+
+  * {
+    box-sizing: border-box;
     margin: 0;
-    width: 100%;
-    height: 100%;
-    font-family: system-ui, sans-serif;
-    background: #f8fafc;
+    padding: 0;
   }
+
   body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+    font-family: system-ui, Roboto, sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    line-height: 1.6;
   }
-  main {
-    background: #fff;
-    padding: 2rem 3rem;
-    border-radius: 1rem;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  header {
     text-align: center;
+    margin-bottom: 3rem;
   }
+
   h1 {
     font-size: 2.5rem;
-    color: #111827;
+    margin-bottom: 0.5rem;
   }
-  .template-btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    margin-bottom: 2rem;
-    background: #3b82f6;
-    color: #fff;
+
+  header p {
+    color: #6b7280;
+    font-size: 1.125rem;
+  }
+
+  .links-container {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .links-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .link-card {
+    display: block;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 600;
     text-decoration: none;
-    transition: background 0.2s;
+    color: inherit;
+    transition: all 0.2s ease;
+    position: relative;
   }
-  .template-btn:hover {
-    background: #1d4ed8;
+
+  .link-card:hover {
+    background-color: var(--card-hover);
+    transform: translateY(-2px);
   }
-  a {
-    color: #3b82f6;
-    font-weight: 500;
-    transition: color 0.2s;
+
+  .link-card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
   }
-  a:hover {
-    color: #fff;
-    text-decoration: underline;
+
+  .link-card p {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .external-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1rem;
+  }
+
+  footer {
+    margin-top: 3rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.875rem;
   }
 </style>
