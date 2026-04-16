@@ -6,10 +6,12 @@ type Link = {
   url: string;
   isExternal?: boolean;
   date?: string;
+  github?: string;
 };
 
 type LinkGroup = {
   title?: string;
+  color?: string;
   links: Link[];
 };
 
@@ -31,7 +33,7 @@ function formatDate(dateString: string) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Links Landing Page</title>
+    <title>Hima's Presentation Archive</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
@@ -42,34 +44,62 @@ function formatDate(dateString: string) {
       </header>
 
       {
-        links.map((section) => (
-          <section class="section">
-            {section.title && <h2 class="section-title">{section.title}</h2>}
-            <div class="links-container">
-              {section.links.map((link) => (
-                <a
-                  href={link.url}
-                  class="link-card"
-                  target={link.isExternal ? "_blank" : undefined}
-                  rel={link.isExternal ? "noopener noreferrer" : undefined}
-                >
-                  <div class="link-content">
-                    <h3 class={link.date ? "with-date" : undefined}>
-                      {link.title}
-                    </h3>
-                    <p>{link.description}</p>
+        links
+          .filter((section) => section.links.length > 0)
+          .map((section) => (
+            <section class="section" style={section.color ? `--card-color: ${section.color}` : undefined}>
+              {section.title && <h2 class="section-title">{section.title}</h2>}
+              <div class="links-container">
+                {section.links.map((link) => (
+                  <div class="link-card">
+                    <div class="link-content">
+                      <h3>
+                        <a
+                          href={link.url}
+                          class="link-title"
+                          target={link.isExternal ? "_blank" : undefined}
+                          rel={
+                            link.isExternal ? "noopener noreferrer" : undefined
+                          }
+                        >
+                          {link.title}
+                        </a>
+                        {link.isExternal && (
+                          <span class="external-indicator">↗</span>
+                        )}
+                      </h3>
+                      <p>{link.description}</p>
+                    </div>
+                    <div class="link-footer">
+                      {link.date && (
+                        <span class="date-badge">{formatDate(link.date)}</span>
+                      )}
+                      {link.github && (
+                        <a
+                          href={link.github}
+                          class="github-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="GitHub repository"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  {link.date && (
-                    <span class="date-badge">{formatDate(link.date)}</span>
-                  )}
-                  {link.isExternal && (
-                    <span class="external-indicator">↗</span>
-                  )}
-                </a>
-              ))}
-            </div>
-          </section>
-        ))
+                ))}
+              </div>
+            </section>
+          ))
       }
 
       <footer>
@@ -88,7 +118,7 @@ function formatDate(dateString: string) {
     --primary: #6366f1;
     --primary-hover: #4f46e5;
     --card-bg: #ffffff;
-    --card-border: #e5e7eb;
+    --card-border: #d1d5db;
     --card-hover: #f3f4f6;
     --section-border: #e5e7eb;
     --date-bg: #f3f4f6;
@@ -152,33 +182,48 @@ function formatDate(dateString: string) {
   }
 
   .link-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
+    background-color: var(--card-color, var(--card-bg));
+    border: 1.5px solid var(--card-border);
     border-radius: 0.5rem;
-    text-decoration: none;
-    color: inherit;
     transition: all 0.2s ease;
     position: relative;
   }
 
   .link-card:hover {
-    background-color: var(--card-hover);
+    background-color: color-mix(in srgb, var(--card-color, var(--card-bg)) 92%, #000);
     transform: translateY(-2px);
   }
 
   .link-content {
-    padding-right: 1.5rem;
+    flex: 1;
   }
 
   .link-card h3 {
-    font-size: 1.25rem;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
-    &.with-date {
-      padding-right: 4.25rem; /* Extra space if date-badge is present */
-    }
     word-break: break-word;
+  }
+
+  .link-title {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Stretched link — makes entire card clickable via the title anchor */
+  .link-title::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .external-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1rem;
   }
 
   .link-card p {
@@ -187,30 +232,34 @@ function formatDate(dateString: string) {
     margin-bottom: 0.75rem;
   }
 
+  .link-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.125rem;
+    position: relative;
+    z-index: 1;
+  }
+
   .date-badge {
-    position: absolute;
-    top: 1rem;
-    right: 2.5rem;
     display: inline-block;
     background-color: var(--date-bg);
     color: var(--date-text);
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
-    margin-top: 0;
   }
 
-  @media (max-width: 400px) {
-    .date-badge {
-      display: none;
-    }
+  .github-link {
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    transition: color 0.2s ease;
   }
 
-  .external-indicator {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1rem;
+  .github-link:hover {
+    color: var(--foreground);
   }
 
   footer {
